@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { users } from '../mock/users';
+import React, { useState } from 'react';  
+import { users } from '../users';  // Ruta ajustada  
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('');
