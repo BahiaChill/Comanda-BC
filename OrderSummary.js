@@ -18,6 +18,145 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
   const currentDate = new Date().toLocaleDateString();
   const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+  // Función para imprimir el pedido (100% online)
+  const handlePrintOrder = () => {
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Pedido Bahia Chill</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            max-width: 100%;
+            margin: 0 auto;
+            color: #333;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #2c5d73;
+            padding-bottom: 10px;
+          }
+          .header h1 {
+            font-size: 22px;
+            color: #2c5d73;
+            margin: 5px 0;
+          }
+          .info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            flex-wrap: wrap;
+          }
+          .items {
+            margin: 15px 0;
+          }
+          .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ddd;
+          }
+          .item-name {
+            font-weight: bold;
+          }
+          .item-notes {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+          }
+          .total {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 15px;
+            font-size: 18px;
+            border-top: 2px solid #2c5d73;
+            padding-top: 10px;
+          }
+          .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            margin-top: 20px;
+          }
+          @media print {
+            body {
+              padding: 0;
+              font-size: 14px;
+            }
+            .no-print {
+              display: none !important;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Bahia Chill</h1>
+          <div class="info">
+            <span><strong>Mesa:</strong> ${selectedTable}</span>
+            <span><strong>Atendido por:</strong> ${username}</span>
+          </div>
+          <div class="info">
+            <span><strong>Fecha:</strong> ${currentDate}</span>
+            <span><strong>Hora:</strong> ${currentTime}</span>
+          </div>
+        </div>
+        
+        <div class="items">
+          <h3>Detalle del pedido:</h3>
+          ${items.map(item => `
+            <div class="item">
+              <div>
+                <div class="item-name">${item.product.name} x${item.quantity}</div>
+                ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+              </div>
+              <div>$${(item.product.price * item.quantity).toLocaleString()}</div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div class="total">
+          Total: $${total.toLocaleString()}
+        </div>
+        
+        ${invoiceData.name ? `
+          <div class="invoice-info">
+            <h3>Datos de facturación:</h3>
+            <p><strong>Nombre:</strong> ${invoiceData.name}</p>
+            <p><strong>${invoiceData.idType}:</strong> ${invoiceData.idNumber}</p>
+            <p><strong>Contacto:</strong> ${invoiceData.contact} (${invoiceData.contactType})</p>
+          </div>
+        ` : ''}
+        
+        <div class="footer">
+          <p>Sistema de Comanda Bahia Chill</p>
+        </div>
+
+        <div class="no-print" style="margin-top: 20px; text-align: center;">
+          <button onclick="window.print()" style="padding: 8px 15px; background: #2c5d73; color: white; border: none; border-radius: 4px; margin-right: 10px;">
+            Imprimir
+          </button>
+          <button onclick="window.close()" style="padding: 8px 15px; background: #ccc; color: #333; border: none; border-radius: 4px;">
+            Cerrar
+          </button>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
+  // Resto del código...
   const handleEdit = (index) => {
     setEditingIndex(index);
     setEditQuantity(items[index].quantity);
@@ -33,140 +172,6 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
 
   const handleCancelEdit = () => {
     setEditingIndex(null);
-  };
-
-  const handleSaveAsPDF = () => {
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Pedido Bahia Chill</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 15px;
-            max-width: 300px;
-            margin: 0 auto;
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 15px;
-          }
-          .header h1 {
-            font-size: 22px;
-            color: #2c5d73;
-            margin: 5px 0;
-          }
-          .subheader {
-            font-size: 12px;
-            color: #666;
-          }
-          .info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-          }
-          .items {
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-            margin-bottom: 15px;
-          }
-          .item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-          }
-          .item-name {
-            font-weight: 500;
-          }
-          .item-quantity {
-            font-size: 12px;
-            color: #666;
-          }
-          .notes {
-            font-size: 12px;
-            color: #666;
-            margin-top: 2px;
-          }
-          .total {
-            font-weight: bold;
-            text-align: right;
-            margin-top: 10px;
-            font-size: 18px;
-            border-top: 2px solid #2c5d73;
-            padding-top: 5px;
-          }
-          .footer {
-            text-align: center;
-            font-size: 11px;
-            color: #666;
-            margin-top: 20px;
-          }
-          .invoice-info {
-            border-top: 1px dashed #ccc;
-            padding-top: 10px;
-            margin-bottom: 15px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>Bahia Chill</h1>
-          <p class="subheader">Recuerda subir este archivo al almacenamiento correspondiente</p>
-          <div class="info">
-            <span><strong>Mesa:</strong> ${selectedTable}</span>
-            <span><strong>Atendido por:</strong> ${username}</span>
-          </div>
-          <div class="info">
-            <span><strong>Fecha:</strong> ${currentDate}</span>
-            <span><strong>Hora:</strong> ${currentTime}</span>
-          </div>
-        </div>
-        
-        <div class="items">
-          ${items.map(item => `
-            <div class="item">
-              <div>
-                <span class="item-name">${item.product.name}</span>
-                <span class="item-quantity">x${item.quantity}</span>
-                ${item.notes ? `<div class="notes">(${item.notes})</div>` : ''}
-              </div>
-              <div>$${(item.product.price * item.quantity).toLocaleString()}</div>
-            </div>
-          `).join('')}
-        </div>
-        
-        <div class="total">
-          Total: $${total.toLocaleString()}
-        </div>
-        
-        ${invoiceData.name ? `
-          <div class="invoice-info">
-            <p style="font-weight: bold; font-size: 14px;">Datos de Facturación:</p>
-            <p style="font-size: 13px;"><strong>Nombre:</strong> ${invoiceData.name}</p>
-            <p style="font-size: 13px;"><strong>${invoiceData.idType}:</strong> ${invoiceData.idNumber}</p>
-            <p style="font-size: 13px;"><strong>${invoiceData.contactType}:</strong> ${invoiceData.contact}</p>
-          </div>
-        ` : ''}
-        
-        <div class="footer">
-          <p>Sistema de Comanda para Bahia Chill ®</p>
-          <p>Todos los derechos reservados.</p>
-        </div>
-      </body>
-      </html>
-    `;
-
-    const blob = new Blob([printContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Pedido_M${selectedTable}_${currentDate.replace(/\//g, '-')}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -215,7 +220,10 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
                         type="number"
                         min="1"
                         value={editQuantity}
-                        onChange={(e) => setEditQuantity(parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          setEditQuantity(isNaN(value) || value < 1 ? 1 : value);
+                        }}
                         className="w-16 px-2 py-1 border border-gray-300 rounded"
                       />
                     </div>
@@ -246,14 +254,16 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
                       <button
                         onClick={() => handleEdit(index)}
                         className="text-blue-400 hover:text-blue-600"
+                        aria-label="Editar"
                       >
-                        ✏️
+                        Editar
                       </button>
                       <button
                         onClick={() => onRemoveItem(index)}
                         className="text-red-400 hover:text-red-600"
+                        aria-label="Eliminar"
                       >
-                        ×
+                        Eliminar
                       </button>
                     </div>
                   </div>
@@ -300,10 +310,10 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
 
           {items.length > 0 && (
             <button
-              onClick={handleSaveAsPDF}
+              onClick={handlePrintOrder}
               className="w-full mt-4 bg-[#3d819d] hover:bg-[#2c5d73] text-white font-bold py-2 px-4 rounded-lg transition-colors"
             >
-              Guardar Pedido (PDF)
+              Imprimir Pedido
             </button>
           )}
         </div>
@@ -313,5 +323,3 @@ const OrderSummary = ({ items, selectedTable, username, onUpdateItem, onRemoveIt
 };
 
 export default OrderSummary;
-
-// DONE
