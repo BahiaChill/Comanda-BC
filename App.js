@@ -1,29 +1,27 @@
-import React, { useState } from 'react';
-import LoginForm from './components/LoginForm';
-import OrderScreen from './components/OrderScreen';
+import React, { useState } from 'react';  
+import LoginForm from './LoginForm';  
+import OrderScreen from './OrderScreen';  
 
-const App = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+const App = () => {  
+  const [currentUser, setCurrentUser] = useState(null);  
 
-  const handleLogin = (username) => {
-    setCurrentUser(username);
-  };
+  const handleLogin = (username) => {  
+    setCurrentUser(username);  
+  };  
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-  };
+  const handleLogout = () => {  
+    setCurrentUser(null);  
+  };  
 
-  return (
-    <div className="App">
-      {!currentUser ? (
-        <LoginForm onLogin={handleLogin} />
-      ) : (
-        <OrderScreen username={currentUser} onLogout={handleLogout} />
-      )}
-    </div>
-  );
-};
+  return (  
+    <div className="App">  
+      {!currentUser ? (  
+        <LoginForm onLogin={handleLogin} />  
+      ) : (  
+        <OrderScreen username={currentUser} onLogout={handleLogout} />  
+      )}  
+    </div>  
+  );  
+};  
 
-export default App;
-
-// DONE
+export default App;  
