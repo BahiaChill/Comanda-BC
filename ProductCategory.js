@@ -2,10 +2,10 @@ import React from 'react';
 
 const ProductCategory = ({ category, products, onAddItem }) => {
   const handleAddClick = (product, e) => {
-    e.stopPropagation(); // Evita eventos no deseados
+    e.stopPropagation();
     onAddItem(product);
     
-    // Feedback visual (opcional)
+    // Feedback visual
     const button = e.currentTarget;
     button.classList.add('bg-green-500');
     setTimeout(() => {
@@ -22,7 +22,7 @@ const ProductCategory = ({ category, products, onAddItem }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {products.map((product) => (
           <article 
-            key={product.id || product.name} 
+            key={product.id}  // Key modificada aquí
             className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
             onClick={(e) => handleAddClick(product, e)}
             tabIndex="0"
@@ -32,7 +32,7 @@ const ProductCategory = ({ category, products, onAddItem }) => {
               <div>
                 <h4 className="font-medium text-gray-800">{product.name}</h4>
                 <p className="text-gray-600">
-                  ${product.price.toLocaleString('es-CO')} {/* Formato local */}
+                  ${product.price.toLocaleString('es-CO')}
                 </p>
                 {product.description && (
                   <p className="text-sm text-gray-500 mt-1">
