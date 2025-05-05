@@ -9,8 +9,8 @@ const users = [
 const products = [
   { name: "Aguila", price: 3500, category: "cerveza" },
   { name: "Poker", price: 3500, category: "cerveza" },
-  { name: "Budwaiser", price: 3000, category: "cerveza" },
-  { name: "Costena", price: 3000, category: "cerveza" },
+  { name: "Budweiser", price: 3000, category: "cerveza" },
+  { name: "Costeña", price: 3000, category: "cerveza" },
   { name: "Coronita", price: 4000, category: "cerveza" },
   { name: "Corona", price: 8000, category: "cerveza" },
   { name: "Stella Artois", price: 8000, category: "cerveza" },
